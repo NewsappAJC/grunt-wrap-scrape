@@ -21,7 +21,10 @@ module.exports = function(grunt) {
     // Set defaults
     var options = this.options({
       url: false,
-      els: 'style'
+      els: 'style',
+      filterContent: function(style) {
+        return true;
+      }
     });
 
     // Validate options
@@ -30,6 +33,9 @@ module.exports = function(grunt) {
     }
     else if(grunt.util.kindOf(options.els) !== 'string' && grunt.util.kindOf(options.els) !== 'array') {
       grunt.fail.fatal('options.els must be a string or array.');
+    }
+    else if(grunt.util.kindOf(options.filterContent) !== 'function') {
+      grunt.fail.fatal('options.filterContent must be a function.');
     }
 
     // Get the page to scrape
@@ -65,8 +71,16 @@ module.exports = function(grunt) {
       grunt.fail.warn('No elements matching options.els found on the page. No output file will be created.');
     }
 
+    // Run the our filter function
+    var afterFilter = filtered.filter(options.filterContent);
+
+    // Fail if none of the specified items are found
+    if(afterFilter.length === 0) {
+      grunt.fail.warn('No styles remain after filtering using options.filterContent. No output file will be created.');
+    }
+
     // Count the number of found elements (for reporting in the console)
-    var numEls = filtered.length;
+    var numEls = afterFilter.length;
 
     // Join the array of CSS styles into a single string
     var joined = styles.join('\n');

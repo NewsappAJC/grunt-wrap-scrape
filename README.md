@@ -159,7 +159,15 @@ grunt.initConfig({
       url: 'http://example.com/path/to/wrap'
 
       // Optional: Selector(s) for the elements to scrape.
-      els: 'style'
+      els: 'style',
+
+      // Optional: Filter the scripts included in the final file using a filter
+      // function, which will be passed each style, and return a boolean
+      // indicating whether the style should be kept
+      filterContent: function(style) {
+        // Example of excluding all styles containing string `.header a`
+        return style.indexOf('.header a') === -1;
+      }
     },
     your_target: {
       options: {
@@ -185,6 +193,15 @@ Type: `String` `Array`
 Default: `style`
 
 TK
+
+#### options.filterContent
+Type: `Function`
+Default:
+```js
+function(script) {
+  return true
+}
+```
 
 ### Usage Examples
 
