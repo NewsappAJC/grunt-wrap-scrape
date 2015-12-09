@@ -158,9 +158,6 @@ grunt.initConfig({
       // URL to scrape
       url: 'http://example.com/path/to/wrap'
 
-      // Optional: Selector(s) for the elements to scrape.
-      els: 'style',
-
       // Optional: Filter the scripts included in the final file using a filter
       // function, which will be passed each style, and return a boolean
       // indicating whether the style should be kept
@@ -185,12 +182,6 @@ grunt.initConfig({
 #### options.url
 **Required**
 Type: `String`
-
-TK
-
-#### options.els
-Type: `String` `Array`
-Default: `style`
 
 TK
 

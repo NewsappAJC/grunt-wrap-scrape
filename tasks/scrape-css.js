@@ -21,7 +21,6 @@ module.exports = function(grunt) {
     // Set defaults
     var options = this.options({
       url: false,
-      els: 'style',
       filterContent: function(style) {
         return true;
       }
@@ -31,8 +30,8 @@ module.exports = function(grunt) {
     if(!options.url || grunt.util.kindOf(options.url) !== 'string') {
       grunt.fail.fatal('A URL for the page to scrape is required. Set it as options.url.');
     }
-    else if(grunt.util.kindOf(options.els) !== 'string' && grunt.util.kindOf(options.els) !== 'array') {
-      grunt.fail.fatal('options.els must be a string or array.');
+    else if(grunt.util.kindOf(options.els) !== 'string') {
+      grunt.fail.fatal('options.els must be a string.');
     }
     else if(grunt.util.kindOf(options.filterContent) !== 'function') {
       grunt.fail.fatal('options.filterContent must be a function.');
@@ -44,22 +43,10 @@ module.exports = function(grunt) {
     // Get the body and parse it using cheerio
     var $ = cheerio.load(toScrape.getBody('utf8'));
 
-    // Normalize the els option
-    if(grunt.util.kindOf(options.els) === 'string') {
-      options.els = [options.els];
-    }
-
-    // Get the html of each element specified in the options
-    var styles = options.els.map(function(selector) {
-      var $item = $(selector);
-      if($item.length === 0) {
-        grunt.log.warn(selector + ' not found on page.');
-      }
-      else {
-        grunt.verbose.ok(selector + ' found.');
-      }
-      return $item.text();
-    });
+    // Get the contents of each <style> tag
+    var styles = $('style').map(function(i, el) {
+      return $(el).text();
+    }).get();
 
     // Filter out empty items
     var filtered = styles.filter(function(style) {
@@ -83,7 +70,7 @@ module.exports = function(grunt) {
     var numEls = afterFilter.length;
 
     // Join the array of CSS styles into a single string
-    var joined = styles.join('\n');
+    var joined = afterFilter.join('\n');
 
     // Save our scraped CSS
     this.files.forEach(function(file) {
