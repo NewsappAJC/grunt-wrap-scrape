@@ -1,0 +1,1 @@
+document.write('<h1 id="scrape-this">Scrape this ...</h1> <h3 id="and-this">... and this</h3>');
